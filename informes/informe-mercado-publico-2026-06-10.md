@@ -53,3 +53,5 @@ URL:                https://www.mercadopublico.cl/Procurement/Modules/RFB/Detail
 ---
 
 *Informe generado automáticamente con la skill `scrap-mercado-publico`. A pedido del usuario, la búsqueda se hizo con todas las palabras clave juntas en una sola consulta (el buscador las combina como OR), en vez de palabra por palabra.*
+
+> ⚠️ **Error de envío de correo:** no fue posible enviar el informe a cschneider@hubot.cl. La conexión a `mail.hubot.cl:465` (SMTP_SSL) expiró (`TimeoutError: [Errno 110] Connection timed out`) en 2 intentos. Las variables SMTP estaban definidas; probablemente la política de red del entorno bloquea el tráfico SMTP saliente. El informe queda commiteado en el repositorio.
