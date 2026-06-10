@@ -1,0 +1,11 @@
+# Node / Playwright
+node_modules/
+.cache/
+
+# Sistema
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Informes generados (descomentar si NO quieres versionarlos)
+# informes/
