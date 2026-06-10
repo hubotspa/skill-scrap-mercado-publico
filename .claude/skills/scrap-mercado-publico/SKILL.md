@@ -10,7 +10,7 @@ Genera un informe de licitaciones publicadas en **mercadopublico.cl** que coinci
 ## Requisitos del entorno
 
 - **MCP de Playwright** (`playwright`) activo — ya declarado en `.mcp.json` del proyecto. Da las herramientas `browser_navigate`, `browser_snapshot`, `browser_click`, `browser_type`, `browser_evaluate`, etc.
-- **Envío de correo**: usa el conector/MCP de correo disponible (Gmail). Si no hay conector de correo, guarda el informe en `informes/` y avisa que no se pudo enviar.
+- **Envío de correo**: vía **SMTP** con el script `scripts/send_email.py`, que lee las credenciales desde variables de entorno (`SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `MAIL_FROM`, `MAIL_TO`). Estas se configuran en el entorno de la nube (claude.ai/code), **no** en el repo.
 
 ## Palabras clave de búsqueda
 
@@ -85,11 +85,16 @@ URL:                https://www.mercadopublico.cl/Procurement/Modules/RFB/Detail
 
 Incluir un encabezado con la fecha del informe y el total de licitaciones encontradas. Guardar una copia en `informes/informe-mercado-publico-AAAA-MM-DD.md`.
 
-### 6. Enviar el correo
+### 6. Enviar el correo (SMTP)
 - **Para:** `cschneider@hubot.cl`
 - **Asunto:** `Informe licitaciones Mercado Público — <fecha> (<N> resultados)`
-- **Cuerpo:** el informe (HTML o texto). Adjuntar/incrustar el listado.
-- Usar el conector de Gmail / MCP de correo disponible.
+- Generar el cuerpo como HTML en `informes/informe-mercado-publico-<fecha>.html` y enviarlo:
+  ```bash
+  python scripts/send_email.py \
+    --subject "Informe licitaciones Mercado Público — <fecha> (<N> resultados)" \
+    --body-file informes/informe-mercado-publico-<fecha>.html --html
+  ```
+- Las credenciales vienen de variables de entorno (`SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `MAIL_FROM`, `MAIL_TO`). Si el script falla por falta de variables, dejar el informe commiteado en el repo y anotar el error al final del informe.
 
 ## Notas
 - El sitio puede tardar o mostrar errores intermitentes: reintentar la navegación hasta 3 veces antes de descartar una palabra clave.
