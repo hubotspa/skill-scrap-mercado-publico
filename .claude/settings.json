@@ -11,5 +11,17 @@
       "mcp__playwright__*"
     ],
     "defaultMode": "bypassPermissions"
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/scripts/setup-playwright-browser.sh\""
+          }
+        ]
+      }
+    ]
   }
 }
