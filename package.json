@@ -1,7 +1,7 @@
 {
   "name": "skill-scrap-mercado-publico",
   "version": "1.0.0",
-  "description": "Skill de Claude Code que busca licitaciones en [mercadopublico.cl](https://www.mercadopublico.cl) por palabras clave (Arduino, ESP32, robótica, etc.), extrae los datos de cada ficha y envía un informe ordenado por fecha de publicación a **cschneider@hubot.cl**.",
+  "description": "Skill de Claude Code que busca licitaciones en [mercadopublico.cl](https://www.mercadopublico.cl) por palabras clave (Arduino, ESP32, robótica, etc.), extrae los datos de cada ficha y envía un informe ordenado por fecha de publicación a **contacto@hubot.cl**.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

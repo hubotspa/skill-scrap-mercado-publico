@@ -46,7 +46,7 @@ async function main() {
   const user = process.env.SMTP_USER || "cschneider@hubot.cl";
   const pass = process.env.SMTP_PASS;
   const from = process.env.MAIL_FROM || user;
-  const to = args.to || process.env.MAIL_TO || "cschneider@hubot.cl";
+  const to = args.to || process.env.MAIL_TO || "contacto@hubot.cl";
 
   if (!pass) {
     console.error("ERROR: falta la variable de entorno SMTP_PASS");

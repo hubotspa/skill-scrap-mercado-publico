@@ -27,7 +27,7 @@ on:
         description: "Destinatario"
         required: false
         type: string
-        default: "cschneider@hubot.cl"
+        default: "contacto@hubot.cl"
       body:
         description: "Cuerpo del correo (texto directo)"
         required: false
@@ -66,7 +66,7 @@ jobs:
         run: |
           if [ "$EVENT_NAME" = "push" ]; then
             SUBJECT=$(jq -r '.subject // empty' outbox/email.json)
-            TO=$(jq -r '.to // "cschneider@hubot.cl"' outbox/email.json)
+            TO=$(jq -r '.to // "contacto@hubot.cl"' outbox/email.json)
             BODY_FILE=$(jq -r '.body_file // empty' outbox/email.json)
             AS_HTML=$(jq -r '.html // false' outbox/email.json)
             if [ -z "$BODY_FILE" ]; then

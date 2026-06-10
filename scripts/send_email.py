@@ -9,7 +9,7 @@ de entorno del entorno de la nube (claude.ai/code -> ajustes del entorno):
     SMTP_USER   usuario/cuenta SMTP           ej: hubotspa@gmail.com
     SMTP_PASS   contraseña o app password
     MAIL_FROM   remitente (por defecto = SMTP_USER)
-    MAIL_TO     destinatario (por defecto cschneider@hubot.cl)
+    MAIL_TO     destinatario (por defecto contacto@hubot.cl)
 
 Uso:
     python scripts/send_email.py --subject "Asunto" --body-file informe.md
@@ -27,7 +27,7 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--subject", required=True)
     ap.add_argument("--body-file", required=True)
-    ap.add_argument("--to", default=os.environ.get("MAIL_TO", "cschneider@hubot.cl"))
+    ap.add_argument("--to", default=os.environ.get("MAIL_TO", "contacto@hubot.cl"))
     ap.add_argument("--html", action="store_true", help="enviar el cuerpo como HTML")
     args = ap.parse_args()
 
