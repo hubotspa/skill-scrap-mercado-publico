@@ -1,6 +1,6 @@
 {
-  "subject": "Prueba SMTP desde Claude Code en la nube",
+  "subject": "Informe licitaciones Mercado Público — 10/06/2026 (4 resultados)",
   "to": "cschneider@hubot.cl",
-  "body": "Este es un correo de PRUEBA enviado desde un runner de GitHub Actions, disparado por Claude Code en la nube mediante un push de outbox/email.json.\n\nSi recibes este mensaje, el envío de correos vía GitHub Actions (mail.hubot.cl:465 con el secret SMTP_PASS) funciona correctamente.",
-  "html": false
+  "body_file": "informes/informe-mercado-publico-2026-06-10.html",
+  "html": true
 }

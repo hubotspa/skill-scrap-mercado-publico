@@ -1,10 +1,32 @@
 # Informe licitaciones Mercado Público — 10/06/2026
 
 - **Fecha del informe:** 10/06/2026
-- **Búsqueda realizada:** todas las palabras clave juntas en el buscador (`Arduino ESP32 Microbit Lego Spike Mindstorm Raspberry Robot robótica`)
+- **Búsqueda realizada:** todas las palabras clave de una sola vez en el buscador (`Arduino, ESP32, Microbit, Lego, Spike, Mindstorm, Raspberry, Robot, robótica` — el sitio elimina las comas y busca los términos combinados)
 - **Total de licitaciones encontradas:** 4
 
 ---
+
+```
+ID:                 5423-7-LE26
+Título:             ADQUIRIR "ARTICULOS PARA LA CARRERA INGENIERÍA CIVIL EN INFORMÁTICA, DE LA UNIVERSIDAD DE LOS LAGOS"
+Institución:        UNIVERSIDAD DE LOS LAGOS
+Monto disponible:   Entre 100 y 1000 UTM
+Fecha publicación:  08/06/2026
+Fecha de cierre:    18/06/2026
+Descripción:        ADQUIRIR "ARTICULOS PARA LA CARRERA INGENIERÍA CIVIL EN INFORMÁTICA, DE LA UNIVERSIDAD DE LOS LAGOS".
+URL:                https://www.mercadopublico.cl/Procurement/Modules/RFB/DetailsAcquisition.aspx?qs=yUqNlpnktHc0YIA5cz6I8g==
+```
+
+```
+ID:                 1110404-82-LE26
+Título:             PROVISIÓN DE SET DE ROBÓTICA Y EXPANSIÓN SIMILAR A SPIKE PREMIUM PARA LICEO OCTAVIO PALMA PÉREZ ESTABLECIMIENTO EDUCACIONAL PERTENECIENTES AL SLEP DE CHINCHORRO ARICA
+Institución:        SERVICIO LOCAL DE EDUCACION DE CHINCHORRO
+Monto disponible:   $7.300.860
+Fecha publicación:  08/06/2026
+Fecha de cierre:    18/06/2026
+Descripción:        Que, a través de la Solicitud de Compra N°0641 de 2026, del Servicio Local de Educación Pública de Chinchorro, se requiere la "PROVISIÓN DE SET DE ROBÓTICA Y EXPANSIÓN SIMILAR A SPIKE PREMIUM, PARA LICEO OCTAVIO PALMA PÉREZ, ESTABLECIMIENTO EDUCACIONAL PERTENECIENTES AL SLEP DE CHINCHORRO, ARICA", que cumpla con la funcionalidad según lo estipulan las presentes bases
+URL:                https://www.mercadopublico.cl/Procurement/Modules/RFB/DetailsAcquisition.aspx?qs=7GECJKvmimy/cUdU0Tm0XA==
+```
 
 ```
 ID:                 867990-24-LE26
@@ -18,28 +40,6 @@ URL:                https://www.mercadopublico.cl/Procurement/Modules/RFB/Detail
 ```
 
 ```
-ID:                 5423-7-LE26
-Título:             ADQUIRIR “ARTICULOS PARA LA CARRERA INGENIERÍA CIVIL EN INFORMÁTICA, DE LA UNIVERSIDAD DE LOS LAGOS”
-Institución:        UNIVERSIDAD DE LOS LAGOS
-Monto disponible:   Entre 100 y 1000 UTM (no publicado)
-Fecha publicación:  08/06/2026
-Fecha de cierre:    18/06/2026
-Descripción:        ADQUIRIR “ARTICULOS PARA LA CARRERA INGENIERÍA CIVIL EN INFORMÁTICA, DE LA UNIVERSIDAD DE LOS LAGOS”.
-URL:                https://www.mercadopublico.cl/Procurement/Modules/RFB/DetailsAcquisition.aspx?qs=yUqNlpnktHc0YIA5cz6I8g==
-```
-
-```
-ID:                 1110404-82-LE26
-Título:             PROVISIÓN DE SET DE ROBÓTICA Y EXPANSIÓN SIMILAR A SPIKE PREMIUM PARA LICEO OCTAVIO PALMA PÉREZ ESTABLECIMIENTO EDUCACIONAL PERTENECIENTES AL SLEP DE CHINCHORRO ARICA
-Institución:        SERVICIO LOCAL DE EDUCACION DE CHINCHORRO
-Monto disponible:   $7.300.860
-Fecha publicación:  08/06/2026
-Fecha de cierre:    18/06/2026
-Descripción:        Que, a través de la Solicitud de Compra N°0641 de 2026, del Servicio Local de Educación Pública de Chinchorro, se requiere la “PROVISIÓN DE SET DE ROBÓTICA Y EXPANSIÓN SIMILAR A SPIKE PREMIUM, PARA LICEO OCTAVIO PALMA PÉREZ, ESTABLECIMIENTO EDUCACIONAL PERTENECIENTES AL SLEP DE CHINCHORRO, ARICA”, que cumpla con la funcionalidad según lo estipulan las presentes bases.
-URL:                https://www.mercadopublico.cl/Procurement/Modules/RFB/DetailsAcquisition.aspx?qs=7GECJKvmimy/cUdU0Tm0XA==
-```
-
-```
 ID:                 1271359-47-LE26
 Título:             MATERIALES E INSUMOS TÉCNOLOGICOS - DIREDUC
 Institución:        CORP MUNICIPAL DE DESARROLLO SOCIAL DE LAMPA
@@ -49,9 +49,3 @@ Fecha de cierre:    24/06/2026
 Descripción:        La Corporación Municipal de Desarrollo Social de Lampa requiere la adquisición de artículos tecnológicos destinados a establecimientos educacionales de la comuna, con el propósito de fortalecer los procesos pedagógicos, apoyar la gestión educativa y asegurar la disponibilidad de herramientas tecnológicas adecuadas para el desarrollo de las actividades académicas.
 URL:                https://www.mercadopublico.cl/Procurement/Modules/RFB/DetailsAcquisition.aspx?qs=X/MV/XvVt4Tw/01nzglbtA==
 ```
-
----
-
-*Informe generado automáticamente con la skill `scrap-mercado-publico`. A pedido del usuario, la búsqueda se hizo con todas las palabras clave juntas en una sola consulta (el buscador las combina como OR), en vez de palabra por palabra.*
-
-> ⚠️ **Error de envío de correo:** no fue posible enviar el informe a cschneider@hubot.cl. La conexión a `mail.hubot.cl:465` (SMTP_SSL) expiró (`TimeoutError: [Errno 110] Connection timed out`) en 2 intentos. Las variables SMTP estaban definidas; probablemente la política de red del entorno bloquea el tráfico SMTP saliente. El informe queda commiteado en el repositorio.
