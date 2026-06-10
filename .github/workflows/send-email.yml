@@ -1,0 +1,74 @@
+name: Enviar correo
+
+# Envía un correo usando scripts/send_email.js desde un runner de GitHub
+# (los runners sí tienen salida SMTP al puerto 465, a diferencia del sandbox
+# de Claude Code en la nube). La contraseña se lee del secret SMTP_PASS.
+#
+# Se dispara manualmente (pestaña Actions) o vía API (workflow_dispatch).
+# El cuerpo puede venir como texto directo (input "body") o como la ruta de
+# un archivo ya commiteado en el repo (input "body_file"), p. ej. un informe
+# generado en informes/.
+
+on:
+  workflow_dispatch:
+    inputs:
+      subject:
+        description: "Asunto del correo"
+        required: true
+        type: string
+      to:
+        description: "Destinatario"
+        required: false
+        type: string
+        default: "cschneider@hubot.cl"
+      body:
+        description: "Cuerpo del correo (texto directo)"
+        required: false
+        type: string
+      body_file:
+        description: "Ruta en el repo de un archivo con el cuerpo (alternativa a body)"
+        required: false
+        type: string
+      html:
+        description: "Enviar el cuerpo como HTML"
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  enviar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Preparar cuerpo
+        env:
+          BODY: ${{ inputs.body }}
+          BODY_FILE: ${{ inputs.body_file }}
+        run: |
+          if [ -n "$BODY_FILE" ]; then
+            cp "$BODY_FILE" /tmp/body.txt
+          elif [ -n "$BODY" ]; then
+            printf '%s\n' "$BODY" > /tmp/body.txt
+          else
+            echo "ERROR: debes indicar body o body_file" >&2
+            exit 1
+          fi
+
+      - name: Enviar correo
+        env:
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          SUBJECT: ${{ inputs.subject }}
+          TO: ${{ inputs.to }}
+          AS_HTML: ${{ inputs.html }}
+        run: |
+          EXTRA=""
+          if [ "$AS_HTML" = "true" ]; then EXTRA="--html"; fi
+          node scripts/send_email.js --subject "$SUBJECT" --body-file /tmp/body.txt --to "$TO" $EXTRA
