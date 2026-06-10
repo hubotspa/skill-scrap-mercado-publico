@@ -14,7 +14,7 @@ Genera un informe de licitaciones publicadas en **mercadopublico.cl** que coinci
 
 ## Palabras clave de búsqueda
 
-Buscar **cada una por separado** (no todas juntas) en la barra de búsqueda:
+Buscar **todas de una sola vez**, escribiendo en la barra de búsqueda la lista completa separada por comas:
 
 ```
 Arduino, ESP32, Microbit, Lego, Spike, Mindstorm, Raspberry, Robot, robótica
@@ -38,11 +38,10 @@ Arduino, ESP32, Microbit, Lego, Spike, Mindstorm, Raspberry, Robot, robótica
   - Si esa página da error, intentar `https://www.mercadopublico.cl/home/busquedalicitacion`.
 - Tomar `browser_snapshot` para localizar la barra de búsqueda ("Buscar").
 
-### 2. Buscar palabra por palabra
-Para **cada** palabra clave de la lista:
-1. Escribir la palabra en la barra de búsqueda (`browser_type`) y enviar (Enter o botón Buscar).
+### 2. Buscar todas las palabras de una vez
+1. Escribir en la barra de búsqueda (`browser_type`) la lista completa de palabras clave separadas por comas (`Arduino, ESP32, Microbit, Lego, Spike, Mindstorm, Raspberry, Robot, robótica`) y enviar (Enter o botón Buscar).
 2. Esperar a que carguen los resultados (`browser_snapshot`).
-3. Recorrer cada resultado y extraer los campos visibles (Título, Institución, Monto, Fechas, Descripción, ID).
+3. Recorrer cada resultado (incluyendo paginación si hay varias páginas) y extraer los campos visibles (Título, Institución, Monto, Fechas, Descripción, ID).
 
 ### 3. ⚠️ CRÍTICO — Obtener la URL real de la ficha (está en un modal)
 En los resultados, los enlaces de la descripción **no llevan directo a la ficha**: abren un **modal**. El enlace verdadero a la ficha (formato `.../Procurement/Modules/RFB/DetailsAcquisition.aspx?qs=<código>`) está **dentro de ese modal**. El parámetro `qs` está encriptado, así que **NO se puede construir manualmente** — hay que leerlo del DOM.
@@ -66,7 +65,7 @@ Para cada resultado:
 > Si el `href` viene relativo, anteponer `https://www.mercadopublico.cl`.
 
 ### 4. Consolidar
-- **Deduplicar** por **ID** (una misma licitación puede aparecer en varias palabras clave).
+- **Deduplicar** por **ID** (por si una misma licitación aparece repetida en los resultados).
 - **Ordenar** por **Fecha de publicación descendente** (más reciente primero).
 
 ### 5. Generar el informe
@@ -99,6 +98,6 @@ Incluir un encabezado con la fecha del informe y el total de licitaciones encont
 - La contraseña se lee de la variable de entorno `SMTP_PASS`; `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `MAIL_FROM` y `MAIL_TO` permiten sobreescribir los valores por defecto. Si el envío falla (faltan variables o la red del entorno bloquea SMTP saliente), dejar el informe commiteado en el repo y anotar el error al final del informe.
 
 ## Notas
-- El sitio puede tardar o mostrar errores intermitentes: reintentar la navegación hasta 3 veces antes de descartar una palabra clave.
+- El sitio puede tardar o mostrar errores intermitentes: reintentar la navegación/búsqueda hasta 3 veces antes de abortar.
 - Si una licitación no tiene algún campo, dejarlo como `—`.
-- Si no se encuentra ninguna licitación para una palabra, registrarlo en el informe ("Sin resultados para: <palabra>").
+- Si la búsqueda combinada no arroja ningún resultado, registrarlo en el informe ("Sin resultados para la búsqueda combinada") — y considerar que el buscador pudo interpretar las comas como AND; en ese caso anotarlo para revisar la estrategia.
