@@ -4,7 +4,7 @@
 NUNCA pongas credenciales en este archivo ni en el repo. Defínelas como variables
 de entorno del entorno de la nube (claude.ai/code -> ajustes del entorno):
 
-    SMTP_HOST   por defecto gtxm1299.siteground.biz
+    SMTP_HOST   por defecto mail.hubot.cl
     SMTP_PORT   587 (STARTTLS) o 465 (SSL)    (por defecto 465)
     SMTP_USER   usuario/cuenta SMTP           ej: hubotspa@gmail.com
     SMTP_PASS   contraseña o app password
@@ -31,7 +31,7 @@ def main() -> int:
     ap.add_argument("--html", action="store_true", help="enviar el cuerpo como HTML")
     args = ap.parse_args()
 
-    host = os.environ.get("SMTP_HOST", "gtxm1299.siteground.biz")
+    host = os.environ.get("SMTP_HOST", "mail.hubot.cl")
     port = int(os.environ.get("SMTP_PORT", "465"))
     user = os.environ.get("SMTP_USER")
     password = os.environ.get("SMTP_PASS")

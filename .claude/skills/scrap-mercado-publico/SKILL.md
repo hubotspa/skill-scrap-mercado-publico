@@ -10,7 +10,7 @@ Genera un informe de licitaciones publicadas en **mercadopublico.cl** que coinci
 ## Requisitos del entorno
 
 - **MCP de Playwright** (`playwright`) activo — ya declarado en `.mcp.json` del proyecto. Da las herramientas `browser_navigate`, `browser_snapshot`, `browser_click`, `browser_type`, `browser_evaluate`, etc.
-- **Envío de correo**: vía **SMTP** con el script `scripts/send_email.py`, que lee las credenciales desde variables de entorno (`SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `MAIL_FROM`, `MAIL_TO`). Estas se configuran en el entorno de la nube (claude.ai/code), **no** en el repo.
+- **Envío de correo**: vía **SMTP** con el script `scripts/send_email.js` (nodemailer; por defecto `mail.hubot.cl:465` SSL con la cuenta `cschneider@hubot.cl`, igual que `search_and_email.js`). La contraseña va en la variable de entorno `SMTP_PASS`, configurada en el entorno de la nube (claude.ai/code), **no** en el repo; `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `MAIL_FROM` y `MAIL_TO` son opcionales para sobreescribir defaults. Existe también `scripts/send_email.py` como alternativa equivalente.
 
 ## Palabras clave de búsqueda
 
@@ -88,13 +88,15 @@ Incluir un encabezado con la fecha del informe y el total de licitaciones encont
 ### 6. Enviar el correo (SMTP)
 - **Para:** `cschneider@hubot.cl`
 - **Asunto:** `Informe licitaciones Mercado Público — <fecha> (<N> resultados)`
-- Generar el cuerpo como HTML en `informes/informe-mercado-publico-<fecha>.html` y enviarlo:
+- Generar el cuerpo como HTML en `informes/informe-mercado-publico-<fecha>.html` y enviarlo con el script de **nodemailer** (misma configuración que `search_and_email.js`: servidor `mail.hubot.cl`, puerto `465` SSL, cuenta `cschneider@hubot.cl`):
   ```bash
-  python scripts/send_email.py \
+  npm install   # solo la primera vez, instala nodemailer
+  node scripts/send_email.js \
     --subject "Informe licitaciones Mercado Público — <fecha> (<N> resultados)" \
     --body-file informes/informe-mercado-publico-<fecha>.html --html
   ```
-- Las credenciales vienen de variables de entorno (`SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `MAIL_FROM`, `MAIL_TO`). Si el script falla por falta de variables, dejar el informe commiteado en el repo y anotar el error al final del informe.
+  Alternativa equivalente en Python (mismos argumentos): `python scripts/send_email.py`.
+- La contraseña se lee de la variable de entorno `SMTP_PASS`; `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `MAIL_FROM` y `MAIL_TO` permiten sobreescribir los valores por defecto. Si el envío falla (faltan variables o la red del entorno bloquea SMTP saliente), dejar el informe commiteado en el repo y anotar el error al final del informe.
 
 ## Notas
 - El sitio puede tardar o mostrar errores intermitentes: reintentar la navegación hasta 3 veces antes de descartar una palabra clave.
