@@ -1,6 +1,7 @@
 # Node / Playwright
 node_modules/
 .cache/
+.playwright-mcp/
 
 # Sistema
 Thumbs.db
