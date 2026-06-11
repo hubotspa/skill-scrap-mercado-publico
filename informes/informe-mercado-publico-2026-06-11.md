@@ -86,3 +86,9 @@
 ---
 
 *Informe generado automáticamente el 2026-06-11.*
+
+---
+
+## Nota de envío
+
+El correo a `cschneider@hubot.cl` vía `mail.hubot.cl:465` no pudo enviarse: la conexión SMTP saliente está bloqueada por la política de red del entorno cloud (Egress Gateway de Anthropic). El informe quedó commiteado y publicado en el repositorio GitHub.
