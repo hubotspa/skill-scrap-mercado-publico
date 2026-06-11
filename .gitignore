@@ -10,3 +10,6 @@ desktop.ini
 
 # Informes generados (descomentar si NO quieres versionarlos)
 # informes/
+
+# Playwright temp
+.playwright-mcp/

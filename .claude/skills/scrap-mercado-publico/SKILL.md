@@ -1,6 +1,6 @@
 ---
 name: scrap-mercado-publico
-description: Busca licitaciones en mercadopublico.cl por palabras clave (Arduino, ESP32, robótica, etc.), extrae los datos de cada ficha y envía un informe ordenado por fecha de publicación a cschneider@hubot.cl. Usa el MCP de Playwright para navegar y resolver el enlace real de la ficha (que está dentro de un modal). Úsala cuando se pida buscar/monitorear licitaciones de robótica/electrónica educativa o generar el informe periódico de Mercado Público.
+description: Busca licitaciones en mercadopublico.cl por palabras clave (Arduino, ESP32, robótica, etc.), extrae los datos de cada licitación (incluida la URL real de la ficha, que viene en el onclick verFicha del resultado) y envía un informe ordenado por fecha de publicación a cschneider@hubot.cl. Usa el MCP de Playwright. Úsala cuando se pida buscar/monitorear licitaciones de robótica/electrónica educativa o generar el informe periódico de Mercado Público.
 ---
 
 # Scrap Mercado Público — Informe de licitaciones
@@ -38,36 +38,51 @@ Arduino, ESP32, Microbit, Lego, Spike, Mindstorm, Raspberry, Robot, robótica
   - Si esa página da error, intentar `https://www.mercadopublico.cl/home/busquedalicitacion`.
 - Tomar `browser_snapshot` para localizar la barra de búsqueda ("Buscar").
 
+> **Importante:** la barra de búsqueda y los resultados viven dentro de un **iframe** `iframe[name="form-iframe"]`. Hay que acceder a su `contentDocument` (mismo origen) para leer/escribir.
+
 ### 2. Buscar palabra por palabra
 Para **cada** palabra clave de la lista:
-1. Escribir la palabra en la barra de búsqueda (`browser_type`) y enviar (Enter o botón Buscar).
-2. Esperar a que carguen los resultados (`browser_snapshot`).
-3. Recorrer cada resultado y extraer los campos visibles (Título, Institución, Monto, Fechas, Descripción, ID).
+1. Escribir la palabra en la barra de búsqueda (textbox "¿Qué desea buscar?", dentro del iframe) con `browser_type` y `submit:true` (Enter).
+2. Esperar ~2 s a que carguen los resultados.
+3. Extraer **todos** los resultados de una vez con `browser_evaluate` (ver paso 3). NO hace falta abrir ningún modal ni hacer clicks.
 
-### 3. ⚠️ CRÍTICO — Obtener la URL real de la ficha (está en un modal)
-En los resultados, los enlaces de la descripción **no llevan directo a la ficha**: abren un **modal**. El enlace verdadero a la ficha (formato `.../Procurement/Modules/RFB/DetailsAcquisition.aspx?qs=<código>`) está **dentro de ese modal**. El parámetro `qs` está encriptado, así que **NO se puede construir manualmente** — hay que leerlo del DOM.
+### 3. ✅ Extracción de datos + URL real (método validado, sin modales)
+Cada resultado es un `div.responsive-resultado`. La **URL real de la ficha NO está encriptada**: viene en el atributo `onclick` del enlace del título, en la función `$.Busqueda.verFicha('...?idlicitacion=<ID>')`. Se extrae directo (o se construye como `http://www.mercadopublico.cl/Procurement/Modules/RFB/DetailsAcquisition.aspx?idlicitacion=<ID>`).
 
-Para cada resultado:
-1. Hacer `browser_click` en el enlace de la descripción que abre el modal.
-2. Esperar a que el modal aparezca (`browser_snapshot`).
-3. Extraer el `href` real con `browser_evaluate`, por ejemplo:
-   ```js
-   () => {
-     const a = document.querySelector(
-       'a[href*="DetailsAcquisition.aspx"], .modal a[href*="DetailsAcquisition"], a[href*="qs="]'
-     );
-     return a ? a.href : null;
-   }
-   ```
-   Si hay varios, priorizar el que contenga `DetailsAcquisition.aspx?qs=`.
-4. Guardar esa URL como la **URL** de la licitación.
-5. Cerrar el modal antes de pasar al siguiente resultado.
+Usar este `browser_evaluate` (devuelve un array de objetos listos):
+```js
+() => {
+  const iframe = document.querySelector('iframe[name="form-iframe"]') || document.querySelector('iframe');
+  const doc = iframe.contentDocument || iframe.contentWindow.document;
+  const cards = [...doc.querySelectorAll('.responsive-resultado')];
+  const clean = s => (s||'').replace(/\s+/g,' ').trim();
+  return cards.map(card => {
+    const a = card.querySelector('a[onclick*="verFicha"]');
+    const m = (a ? a.getAttribute('onclick') || '' : '').match(/verFicha\('([^']+)'\)/);
+    const url = m ? m[1] : null;
+    const t = card.innerText;
+    const grab = re => { const x = t.match(re); return x ? clean(x[1]) : null; };
+    const id = grab(/ID Licitaci[^:]*:\s*([\w-]+)/);
+    const title = clean((card.querySelector('h2')||{}).innerText);
+    const descP = [...card.querySelectorAll('p')].find(p => !p.querySelector('strong'));
+    return {
+      id, title,
+      institucion: grab(/Fecha de cierre[\s\S]*?(?:\(En[^\)]*\)\s*)?\n([A-ZÁÉÍÓÚÑ][^\n]+)/),
+      monto: grab(/Monto(?: disponible)?\s*([\s\S]*?)\s*Fecha de publicaci/),
+      fpub: grab(/Fecha de publicaci[^\n]*\s*([0-9]{2}\/[0-9]{2}\/[0-9]{4})/),
+      fcierre: grab(/Fecha de cierre[\s\S]*?([0-9]{2}\/[0-9]{2}\/[0-9]{4})/),
+      url,
+      desc: clean(descP ? descP.innerText : '')
+    };
+  });
+}
+```
 
-> Si el `href` viene relativo, anteponer `https://www.mercadopublico.cl`.
+> Si hay paginación y se quieren más resultados, navegar las páginas (botones `2,3,...`) y repetir el `evaluate`. Por defecto basta con la primera página por palabra clave.
 
 ### 4. Consolidar
 - **Deduplicar** por **ID** (una misma licitación puede aparecer en varias palabras clave).
-- **Ordenar** por **Fecha de publicación descendente** (más reciente primero).
+- **Ordenar** por **Fecha de publicación descendente** (más reciente primero; convertir `dd/mm/aaaa` para comparar).
 
 ### 5. Generar el informe
 Formato por licitación:
@@ -80,7 +95,7 @@ Monto disponible:   ...
 Fecha publicación:  ...
 Fecha de cierre:    ...
 Descripción:        ...
-URL:                https://www.mercadopublico.cl/Procurement/Modules/RFB/DetailsAcquisition.aspx?qs=...
+URL:                http://www.mercadopublico.cl/Procurement/Modules/RFB/DetailsAcquisition.aspx?idlicitacion=1234-56-LE24
 ```
 
 Incluir un encabezado con la fecha del informe y el total de licitaciones encontradas. Guardar una copia en `informes/informe-mercado-publico-AAAA-MM-DD.md`.
