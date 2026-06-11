@@ -4,12 +4,12 @@
 NUNCA pongas credenciales en este archivo ni en el repo. Defínelas como variables
 de entorno del entorno de la nube (claude.ai/code -> ajustes del entorno):
 
-    SMTP_HOST   ej: smtp.gmail.com            (o el SMTP de hubot.cl)
-    SMTP_PORT   587 (STARTTLS) o 465 (SSL)    (por defecto 587)
+    SMTP_HOST   por defecto mail.hubot.cl
+    SMTP_PORT   587 (STARTTLS) o 465 (SSL)    (por defecto 465)
     SMTP_USER   usuario/cuenta SMTP           ej: hubotspa@gmail.com
     SMTP_PASS   contraseña o app password
     MAIL_FROM   remitente (por defecto = SMTP_USER)
-    MAIL_TO     destinatario (por defecto cschneider@hubot.cl)
+    MAIL_TO     destinatario (por defecto contacto@hubot.cl)
 
 Uso:
     python scripts/send_email.py --subject "Asunto" --body-file informe.md
@@ -27,17 +27,17 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--subject", required=True)
     ap.add_argument("--body-file", required=True)
-    ap.add_argument("--to", default=os.environ.get("MAIL_TO", "cschneider@hubot.cl"))
+    ap.add_argument("--to", default=os.environ.get("MAIL_TO", "contacto@hubot.cl"))
     ap.add_argument("--html", action="store_true", help="enviar el cuerpo como HTML")
     args = ap.parse_args()
 
-    host = os.environ.get("SMTP_HOST")
-    port = int(os.environ.get("SMTP_PORT", "587"))
+    host = os.environ.get("SMTP_HOST", "mail.hubot.cl")
+    port = int(os.environ.get("SMTP_PORT", "465"))
     user = os.environ.get("SMTP_USER")
     password = os.environ.get("SMTP_PASS")
     sender = os.environ.get("MAIL_FROM", user)
 
-    missing = [k for k in ("SMTP_HOST", "SMTP_USER", "SMTP_PASS") if not os.environ.get(k)]
+    missing = [k for k in ("SMTP_USER", "SMTP_PASS") if not os.environ.get(k)]
     if missing:
         print(f"ERROR: faltan variables de entorno: {', '.join(missing)}", file=sys.stderr)
         return 2
