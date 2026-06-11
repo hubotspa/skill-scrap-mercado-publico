@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Informe Licitaciones Mercado Público — 2026-06-11</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 800px; margin: 40px auto; color: #333; }
+    h1 { color: #1a5276; border-bottom: 2px solid #1a5276; padding-bottom: 10px; }
+    h2 { color: #922b21; }
+    .meta { background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 20px 0; }
+    .error-box { background: #fdf2f2; border-left: 4px solid #e74c3c; padding: 15px 20px; margin: 20px 0; border-radius: 3px; }
+    .solution-box { background: #eafaf1; border-left: 4px solid #2ecc71; padding: 15px 20px; margin: 20px 0; border-radius: 3px; }
+    code { background: #f0f0f0; padding: 2px 6px; border-radius: 3px; font-size: 0.9em; }
+    pre { background: #f0f0f0; padding: 15px; border-radius: 5px; overflow-x: auto; }
+    ul { line-height: 1.8; }
+    .footer { margin-top: 40px; font-size: 0.85em; color: #888; border-top: 1px solid #ddd; padding-top: 10px; }
+  </style>
+</head>
+<body>
+  <h1>Informe de Licitaciones — Mercado Público</h1>
+
+  <div class="meta">
+    <strong>Fecha:</strong> 2026-06-11<br>
+    <strong>Total licitaciones encontradas:</strong> 0<br>
+    <strong>Estado:</strong> <span style="color:#e74c3c;">&#10007; ERROR — Acceso bloqueado por política de red del entorno cloud</span>
+  </div>
+
+  <h2>&#9888; Error de acceso a mercadopublico.cl</h2>
+
+  <div class="error-box">
+    <p>El scraping <strong>no pudo completarse</strong>. El entorno cloud de Claude Code (claude.ai/code) redirige todo el tráfico HTTPS saliente a través del <strong>Egress Gateway de Anthropic</strong>, el cual tiene una lista de hosts permitidos. El dominio <code>mercadopublico.cl</code> y su API <code>api.mercadopublico.cl</code> <strong>no están en esa lista</strong>, por lo que todas las solicitudes retornan:</p>
+    <pre>HTTP 403 — Host not in allowlist</pre>
+    <p>Métodos probados:</p>
+    <ul>
+      <li>Playwright (browser_navigate) → 403</li>
+      <li>cURL desde terminal → 403</li>
+      <li>WebFetch (herramienta nativa Claude Code) → 403</li>
+    </ul>
+  </div>
+
+  <h3>Diagnóstico técnico</h3>
+  <pre>Certificado SSL interceptado por:
+  issuer: O=Anthropic; CN=Egress Gateway SDS Issuing CA (production)
+
+Respuesta recibida:
+  HTTP 403: Host not in allowlist</pre>
+
+  <h3>Palabras clave que se intentó buscar</h3>
+  <ul>
+    <li>Arduino</li><li>ESP32</li><li>Microbit</li><li>Lego</li><li>Spike</li>
+    <li>Mindstorm</li><li>Raspberry</li><li>Robot</li><li>Robótica</li>
+  </ul>
+
+  <h2>&#128161; Cómo solucionar</h2>
+
+  <div class="solution-box">
+    <p><strong>Opción 1 — Cambiar política de red del entorno cloud:</strong><br>
+    Al crear una nueva sesión en <a href="https://claude.ai/code">claude.ai/code</a>, seleccionar una política de red que permita acceso a hosts chilenos (política "unrestricted" o con <code>mercadopublico.cl</code> en el allowlist).<br>
+    Ver documentación: <a href="https://code.claude.com/docs/en/claude-code-on-the-web">https://code.claude.com/docs/en/claude-code-on-the-web</a></p>
+
+    <p><strong>Opción 2 — Ejecutar localmente:</strong><br>
+    Usar Claude Code CLI (<code>claude</code> en terminal local) donde no hay restricciones de red de Anthropic.</p>
+  </div>
+
+  <div class="footer">
+    Informe generado automáticamente por <em>skill-scrap-mercado-publico</em> — 2026-06-11
+  </div>
+</body>
+</html>
