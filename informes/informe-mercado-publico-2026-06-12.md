@@ -1,11 +1,26 @@
 # Informe de Licitaciones — Mercado Público
 **Fecha del informe:** 2026-06-12  
 **Palabras clave:** Arduino, ESP32, Microbit, Lego, Spike, Mindstorm, Raspberry, Robot, robótica  
-**Total de licitaciones encontradas:** 4
+**Total de licitaciones encontradas:** 5
 
 ---
 
 ## Licitación 1
+
+```
+ID:                 5055-32-LP26
+Título:             CONVENIO PROTESIS PRIMARIA CON INSTRUMENTAL EQUIPAMIENTO Y ASISTENCIA ROBOTICA PARA TRAUMATOLOGIA EQUIPO DE RODILLA
+Institución:        SERVICIO DE SALUD DEL MAULE HOSPITAL DE TALCA
+Monto disponible:   Igual o superior a 1.000 UTM e inferior a 2.000 UTM
+Fecha publicación:  12/06/2026
+Fecha de cierre:    02/07/2026
+Descripción:        El objetivo de la presente licitación, es invitar a través de www.mercadopublico.cl a todos los proveedores del rubro a participar del convenio por adquisición de PROTESIS PRIMARIA CON INSTRUMENTAL, EQUIPAMIENTO Y ASISTENCIA ROBOTICA PARA TRAUMATOLOGIA EQUIPO DE RODILLA para el Hospital Regional de Talca y bajo las especificaciones técnicas requeridas por la Institución con el fin de seleccionar la oferta más conveniente de acuerdo a los criterios de evaluación, asegurando el abastecimiento en calidad y oportunidad, satisfaciendo así la demanda de los usuarios.
+URL:                http://www.mercadopublico.cl/Procurement/Modules/RFB/DetailsAcquisition.aspx?idlicitacion=5055-32-LP26
+```
+
+---
+
+## Licitación 2
 
 ```
 ID:                 1110404-82-LE26
@@ -20,7 +35,7 @@ URL:                http://www.mercadopublico.cl/Procurement/Modules/RFB/Details
 
 ---
 
-## Licitación 2
+## Licitación 3
 
 ```
 ID:                 867990-24-LE26
@@ -35,7 +50,7 @@ URL:                http://www.mercadopublico.cl/Procurement/Modules/RFB/Details
 
 ---
 
-## Licitación 3
+## Licitación 4
 
 ```
 ID:                 5423-7-LE26
@@ -50,13 +65,13 @@ URL:                http://www.mercadopublico.cl/Procurement/Modules/RFB/Details
 
 ---
 
-## Licitación 4
+## Licitación 5
 
 ```
 ID:                 1271359-47-LE26
 Título:             MATERIALES E INSUMOS TÉCNOLOGICOS - DIREDUC
 Institución:        CORP MUNICIPAL DE DESARROLLO SOCIAL DE LAMPA
-Monto disponible:   estimado $62.421.000
+Monto disponible:   $62.421.000
 Fecha publicación:  04/06/2026
 Fecha de cierre:    24/06/2026
 Descripción:        La Corporación Municipal de Desarrollo Social de Lampa requiere la adquisición de artículos tecnológicos destinados a establecimientos educacionales de la comuna, con el propósito de fortalecer los procesos pedagógicos, apoyar la gestión educativa y asegurar la disponibilidad de herramientas tecnológicas adecuadas para el desarrollo de las actividades académicas.
@@ -65,4 +80,4 @@ URL:                http://www.mercadopublico.cl/Procurement/Modules/RFB/Details
 
 ---
 
-*Generado automáticamente el 2026-06-12 por el skill scrap-mercado-publico.*
+*Generado automáticamente el 2026-06-12 por el skill scrap-mercado-publico de Hubot SPA.*
