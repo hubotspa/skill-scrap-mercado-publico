@@ -2,7 +2,7 @@
 
 Skill de Claude Code que busca licitaciones en [mercadopublico.cl](https://www.mercadopublico.cl)
 por palabras clave (Arduino, ESP32, robótica, etc.), extrae los datos de cada ficha
-y envía un informe ordenado por fecha de publicación a **cschneider@hubot.cl**.
+y envía un informe ordenado por fecha de publicación a **contacto@hubot.cl**.
 
 ## Contenido
 

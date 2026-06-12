@@ -1,11 +1,11 @@
 ---
 name: scrap-mercado-publico
-description: Busca licitaciones en mercadopublico.cl por palabras clave (Arduino, ESP32, robótica, etc.), extrae los datos de cada licitación (incluida la URL real de la ficha, que viene en el onclick verFicha del resultado) y envía un informe ordenado por fecha de publicación a cschneider@hubot.cl. Usa el MCP de Playwright. Úsala cuando se pida buscar/monitorear licitaciones de robótica/electrónica educativa o generar el informe periódico de Mercado Público.
+description: Busca licitaciones en mercadopublico.cl por palabras clave (Arduino, ESP32, robótica, etc.), extrae los datos de cada licitación (incluida la URL real de la ficha, que viene en el onclick verFicha del resultado) y envía un informe ordenado por fecha de publicación a contacto@hubot.cl. Usa el MCP de Playwright. Úsala cuando se pida buscar/monitorear licitaciones de robótica/electrónica educativa o generar el informe periódico de Mercado Público.
 ---
 
 # Scrap Mercado Público — Informe de licitaciones
 
-Genera un informe de licitaciones publicadas en **mercadopublico.cl** que coincidan con un conjunto de palabras clave, y lo envía por correo a **cschneider@hubot.cl**.
+Genera un informe de licitaciones publicadas en **mercadopublico.cl** que coincidan con un conjunto de palabras clave, y lo envía por correo a **contacto@hubot.cl**.
 
 ## Requisitos del entorno
 
@@ -14,7 +14,7 @@ Genera un informe de licitaciones publicadas en **mercadopublico.cl** que coinci
 
 ## Palabras clave de búsqueda
 
-Buscar **cada una por separado** (no todas juntas) en la barra de búsqueda:
+Insertar **TODAS de una sola vez** en la barra de búsqueda, separadas por comas (el buscador acepta la búsqueda combinada). **NO iterar palabra por palabra.**
 
 ```
 Arduino, ESP32, Microbit, Lego, Spike, Mindstorm, Raspberry, Robot, robótica
@@ -40,11 +40,10 @@ Arduino, ESP32, Microbit, Lego, Spike, Mindstorm, Raspberry, Robot, robótica
 
 > **Importante:** la barra de búsqueda y los resultados viven dentro de un **iframe** `iframe[name="form-iframe"]`. Hay que acceder a su `contentDocument` (mismo origen) para leer/escribir.
 
-### 2. Buscar palabra por palabra
-Para **cada** palabra clave de la lista:
-1. Escribir la palabra en la barra de búsqueda (textbox "¿Qué desea buscar?", dentro del iframe) con `browser_type` y `submit:true` (Enter).
+### 2. Buscar (una sola búsqueda combinada)
+1. Escribir **toda la lista de palabras separadas por comas** en la barra de búsqueda (textbox "¿Qué desea buscar?", dentro del iframe) con `browser_type` y `submit:true` (Enter). **Una sola vez, no iterar.**
 2. Esperar ~2 s a que carguen los resultados.
-3. Extraer **todos** los resultados de una vez con `browser_evaluate` (ver paso 3). NO hace falta abrir ningún modal ni hacer clicks.
+3. Extraer **todos** los resultados con `browser_evaluate` (ver paso 3). NO hace falta abrir ningún modal ni hacer clicks.
 
 ### 3. ✅ Extracción de datos + URL real (método validado, sin modales)
 Cada resultado es un `div.responsive-resultado`. La **URL real de la ficha NO está encriptada**: viene en el atributo `onclick` del enlace del título, en la función `$.Busqueda.verFicha('...?idlicitacion=<ID>')`. Se extrae directo (o se construye como `http://www.mercadopublico.cl/Procurement/Modules/RFB/DetailsAcquisition.aspx?idlicitacion=<ID>`).
@@ -78,10 +77,10 @@ Usar este `browser_evaluate` (devuelve un array de objetos listos):
 }
 ```
 
-> Si hay paginación y se quieren más resultados, navegar las páginas (botones `2,3,...`) y repetir el `evaluate`. Por defecto basta con la primera página por palabra clave.
+> Si hay paginación y se quieren más resultados, navegar las páginas (botones `2,3,...`) y repetir el `evaluate`. Por defecto basta con la primera página de resultados.
 
 ### 4. Consolidar
-- **Deduplicar** por **ID** (una misma licitación puede aparecer en varias palabras clave).
+- **Deduplicar** por **ID** (por si una licitación aparece repetida o hay paginación).
 - **Ordenar** por **Fecha de publicación descendente** (más reciente primero; convertir `dd/mm/aaaa` para comparar).
 
 ### 5. Generar el informe
@@ -109,17 +108,17 @@ Para enviar el informe:
    ```json
    {
      "subject": "Informe licitaciones Mercado Público — <fecha> (<N> resultados)",
-     "to": "cschneider@hubot.cl",
+     "to": "contacto@hubot.cl",
      "body_file": "informes/informe-mercado-publico-<fecha>.html",
      "html": true
    }
    ```
-3. `git add outbox/email.json && git commit && git push origin main`. El push a `outbox/email.json` **dispara automáticamente** el workflow "Enviar correo", que envía el HTML a cschneider@hubot.cl.
+3. `git add outbox/email.json && git commit && git push origin main`. El push a `outbox/email.json` **dispara automáticamente** el workflow "Enviar correo", que envía el HTML a contacto@hubot.cl.
 4. (Opcional) Verificar el resultado del envío con `gh run list --workflow=send-email.yml` si `gh` está disponible.
 
 > El cuerpo del correo es el archivo HTML referido en `body_file` (debe estar commiteado en `main` antes del push del outbox).
 
 ## Notas
-- El sitio puede tardar o mostrar errores intermitentes: reintentar la navegación hasta 3 veces antes de descartar una palabra clave.
+- El sitio puede tardar o mostrar errores intermitentes: reintentar la navegación hasta 3 veces antes de descartar la búsqueda.
 - Si una licitación no tiene algún campo, dejarlo como `—`.
-- Si no se encuentra ninguna licitación para una palabra, registrarlo en el informe ("Sin resultados para: <palabra>").
+- Si no se encuentra ninguna licitación, registrarlo en el informe ("Sin resultados").
