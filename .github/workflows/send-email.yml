@@ -1,0 +1,103 @@
+name: Enviar correo
+
+# Envía un correo usando scripts/send_email.js desde un runner de GitHub
+# (los runners sí tienen salida SMTP al puerto 465, a diferencia del sandbox
+# de Claude Code en la nube). La contraseña se lee del secret SMTP_PASS.
+#
+# Dos formas de dispararlo:
+#   1. Push que modifique outbox/email.json (JSON con subject, to, body o
+#      body_file, html). Útil para automatización: Claude Code commitea el
+#      archivo y el runner envía el correo. No requiere permiso actions:write.
+#   2. Manualmente (pestaña Actions) o vía API (workflow_dispatch), con los
+#      mismos campos como inputs.
+# El cuerpo puede venir como texto directo o como la ruta de un archivo ya
+# commiteado en el repo, p. ej. un informe generado en informes/.
+
+on:
+  push:
+    paths:
+      - "outbox/email.json"
+  workflow_dispatch:
+    inputs:
+      subject:
+        description: "Asunto del correo"
+        required: true
+        type: string
+      to:
+        description: "Destinatario"
+        required: false
+        type: string
+        default: "contacto@hubot.cl"
+      body:
+        description: "Cuerpo del correo (texto directo)"
+        required: false
+        type: string
+      body_file:
+        description: "Ruta en el repo de un archivo con el cuerpo (alternativa a body)"
+        required: false
+        type: string
+      html:
+        description: "Enviar el cuerpo como HTML"
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  enviar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Preparar parámetros y cuerpo
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          IN_SUBJECT: ${{ inputs.subject }}
+          IN_TO: ${{ inputs.to }}
+          IN_BODY: ${{ inputs.body }}
+          IN_BODY_FILE: ${{ inputs.body_file }}
+          IN_HTML: ${{ inputs.html }}
+        run: |
+          if [ "$EVENT_NAME" = "push" ]; then
+            SUBJECT=$(jq -r '.subject // empty' outbox/email.json)
+            TO=$(jq -r '.to // "contacto@hubot.cl"' outbox/email.json)
+            BODY_FILE=$(jq -r '.body_file // empty' outbox/email.json)
+            AS_HTML=$(jq -r '.html // false' outbox/email.json)
+            if [ -z "$BODY_FILE" ]; then
+              jq -r '.body // empty' outbox/email.json > /tmp/body.txt
+            fi
+          else
+            SUBJECT="$IN_SUBJECT"
+            TO="$IN_TO"
+            BODY_FILE="$IN_BODY_FILE"
+            AS_HTML="$IN_HTML"
+            if [ -z "$BODY_FILE" ]; then
+              printf '%s\n' "$IN_BODY" > /tmp/body.txt
+            fi
+          fi
+          if [ -n "$BODY_FILE" ]; then
+            cp "$BODY_FILE" /tmp/body.txt
+          fi
+          if [ -z "$SUBJECT" ] || [ ! -s /tmp/body.txt ]; then
+            echo "ERROR: faltan subject o cuerpo (body/body_file)" >&2
+            exit 1
+          fi
+          {
+            echo "SUBJECT=$SUBJECT"
+            echo "TO=$TO"
+            echo "AS_HTML=$AS_HTML"
+          } >> "$GITHUB_ENV"
+
+      - name: Enviar correo
+        env:
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+        run: |
+          EXTRA=""
+          if [ "$AS_HTML" = "true" ]; then EXTRA="--html"; fi
+          node scripts/send_email.js --subject "$SUBJECT" --body-file /tmp/body.txt --to "$TO" $EXTRA

@@ -10,7 +10,7 @@ Genera un informe de licitaciones publicadas en **mercadopublico.cl** que coinci
 ## Requisitos del entorno
 
 - **MCP de Playwright** (`playwright`) activo — ya declarado en `.mcp.json` del proyecto. Da las herramientas `browser_navigate`, `browser_snapshot`, `browser_click`, `browser_type`, `browser_evaluate`, etc.
-- **Envío de correo**: vía **SMTP** con el script `scripts/send_email.py`, que lee las credenciales desde variables de entorno (`SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `MAIL_FROM`, `MAIL_TO`). Estas se configuran en el entorno de la nube (claude.ai/code), **no** en el repo.
+- **Envío de correo**: vía **GitHub Actions** (`.github/workflows/send-email.yml`), que se dispara al pushear `outbox/email.json` y envía por SMTP desde un runner de GitHub usando el secret `SMTP_PASS`. **El sandbox de la nube bloquea SMTP directo**, por eso NO se usa `scripts/send_email.py`. Ver paso 6.
 
 ## Palabras clave de búsqueda
 
@@ -100,16 +100,24 @@ URL:                http://www.mercadopublico.cl/Procurement/Modules/RFB/Details
 
 Incluir un encabezado con la fecha del informe y el total de licitaciones encontradas. Guardar una copia en `informes/informe-mercado-publico-AAAA-MM-DD.md`.
 
-### 6. Enviar el correo (SMTP)
-- **Para:** `cschneider@hubot.cl`
-- **Asunto:** `Informe licitaciones Mercado Público — <fecha> (<N> resultados)`
-- Generar el cuerpo como HTML en `informes/informe-mercado-publico-<fecha>.html` y enviarlo:
-  ```bash
-  python scripts/send_email.py \
-    --subject "Informe licitaciones Mercado Público — <fecha> (<N> resultados)" \
-    --body-file informes/informe-mercado-publico-<fecha>.html --html
-  ```
-- Las credenciales vienen de variables de entorno (`SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `MAIL_FROM`, `MAIL_TO`). Si el script falla por falta de variables, dejar el informe commiteado en el repo y anotar el error al final del informe.
+### 6. Enviar el correo (vía GitHub Actions — método confiable)
+> ⚠️ **NO usar `scripts/send_email.py` (SMTP directo)**: el sandbox de la nube **bloquea el puerto SMTP 465**. El envío confiable es mediante un **GitHub Action** (`.github/workflows/send-email.yml`) que corre en un runner de GitHub (sí tiene salida SMTP) y usa el secret `SMTP_PASS`.
+
+Para enviar el informe:
+1. Asegurarse de que el informe HTML está commiteado y pusheado a `main` (paso 5): `informes/informe-mercado-publico-<fecha>.html`.
+2. Escribir/actualizar el archivo **`outbox/email.json`** con este contenido:
+   ```json
+   {
+     "subject": "Informe licitaciones Mercado Público — <fecha> (<N> resultados)",
+     "to": "cschneider@hubot.cl",
+     "body_file": "informes/informe-mercado-publico-<fecha>.html",
+     "html": true
+   }
+   ```
+3. `git add outbox/email.json && git commit && git push origin main`. El push a `outbox/email.json` **dispara automáticamente** el workflow "Enviar correo", que envía el HTML a cschneider@hubot.cl.
+4. (Opcional) Verificar el resultado del envío con `gh run list --workflow=send-email.yml` si `gh` está disponible.
+
+> El cuerpo del correo es el archivo HTML referido en `body_file` (debe estar commiteado en `main` antes del push del outbox).
 
 ## Notas
 - El sitio puede tardar o mostrar errores intermitentes: reintentar la navegación hasta 3 veces antes de descartar una palabra clave.
